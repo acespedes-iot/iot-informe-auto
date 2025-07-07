@@ -27,17 +27,21 @@ jobs:
           AIO_KEY: ${{ secrets.AIO_KEY }}
         run: python main.py
 
-      - name: Subir informe al repositorio
+      - name: Crear carpeta de publicación
         run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "actions@github.com"
-          git add informe.html tendencia.png clusters.png
-          git commit -m "Informe automático actualizado" || echo "Sin cambios"
-          git push
+          mkdir public
+          cp informe.html tendencia.png clusters.png public/
 
       - name: Publicar en GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: .
+          publish_branch: gh-pages
+
+      - name: Publicar en GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
           publish_branch: gh-pages
