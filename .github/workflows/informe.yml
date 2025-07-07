@@ -1,0 +1,43 @@
+name: Informe IoT
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+
+      - name: Ejecutar análisis
+        env:
+          AIO_USERNAME: ${{ secrets.AIO_USERNAME }}
+          AIO_KEY: ${{ secrets.AIO_KEY }}
+        run: python main.py
+
+      - name: Subir informe al repositorio
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
+          git add informe.html tendencia.png clusters.png
+          git commit -m "Informe automático actualizado" || echo "Sin cambios"
+          git push
+
+      - name: Publicar en GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .
+          publish_branch: gh-pages
