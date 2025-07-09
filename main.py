@@ -78,23 +78,37 @@ plt.title('Agrupación de Comportamientos')
 plt.tight_layout()
 plt.savefig('clusters.png')
 
-# 📈 Tendencia temporal
-plt.figure()
-plt.plot(df['fecha'], df['temperatura'], label='Temperatura', color='red')
-plt.plot(df['fecha'], df['iluminacion'], label='Iluminación', color='blue')
-plt.xlabel('Fecha')
-plt.ylabel('Valor')
+# 📈 Tendencia temporal con dos ejes Y
+fig, ax1 = plt.subplots()
+
+color_temp = 'tab:red'
+color_ilum = 'tab:blue'
+
+ax1.set_xlabel('Fecha')
+ax1.set_ylabel('Temperatura (°C)', color=color_temp)
+ax1.plot(df['fecha'], df['temperatura'], color=color_temp, label='Temperatura')
+ax1.tick_params(axis='y', labelcolor=color_temp)
+
+ax2 = ax1.twinx()  # Segundo eje Y
+ax2.set_ylabel('Iluminación (lux)', color=color_ilum)
+ax2.plot(df['fecha'], df['iluminacion'], color=color_ilum, label='Iluminación')
+ax2.tick_params(axis='y', labelcolor=color_ilum)
+
+fig.autofmt_xdate()
 plt.title('Tendencias Recientes')
-plt.legend()
-plt.xticks(rotation=45)
-plt.tight_layout()
+fig.tight_layout()
 plt.savefig('tendencia.png')
 
 # 🔍 Interpretación detallada
 interpretaciones = []
 for idx, row in cent.iterrows():
     temp, ilum = row['temperatura'], row['iluminacion']
-    interp = f"🔹 <b>Patrón {idx+1}</b>: Temperatura ~{temp:.1f}°C, Iluminación ~{ilum:.0f} lux. "
+    
+    # Asignar colores de patrones al estilo del gráfico
+    colores_patron = ['red', 'blue', 'green']  # Mismo orden que los clusters
+    color = colores_patron[idx]
+    interp = f"<li><span style='color:{color}'>🔹 <b>Patrón {idx+1}</b>: Temperatura ~{temp:.1f}°C, Iluminación ~{ilum:.0f} lux. "
+    
     if temp > 29 and ilum > 400:
         interp += "⚠️ Riesgo de sobrecalentamiento por exposición intensa."
     elif temp < 24 and ilum < 200:
@@ -112,7 +126,9 @@ html = f"""
 <p>📅 Fecha: {datetime.now().strftime('%Y-%m-%d %H:%M')}</p>
 <h2>📌 Análisis de Clústeres</h2>
 <img src='clusters.png' width='600'><br><br>
-<ul>{''.join([f'<li>{x}</li>' for x in interpretaciones])}</ul>
+
+<ul>{''.join(interpretaciones)}</ul>
+
 <h2>📈 Tendencias</h2>
 <img src='tendencia.png' width='600'>
 </body></html>
