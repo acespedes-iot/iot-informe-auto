@@ -50,7 +50,6 @@ cent = pd.DataFrame(scaler.inverse_transform(kmeans.cluster_centers_), columns=[
 
 # 🎨 Colores consistentes
 colores_patron = ['red', 'blue', 'green']
-timestamp = datetime.now().strftime('%Y%m%d%H%M')
 
 # 📊 Gráfico de Clústeres
 plt.figure()
@@ -62,7 +61,7 @@ plt.ylabel('Iluminación (lux)')
 plt.legend()
 plt.title('Agrupación de Comportamientos')
 plt.tight_layout()
-plt.savefig(f'clusters_{timestamp}.png')
+plt.savefig('clusters.png')
 
 # 📈 Tendencia temporal con dos ejes Y
 fig, ax1 = plt.subplots()
@@ -82,7 +81,7 @@ ax2.tick_params(axis='y', labelcolor=color_ilum)
 fig.autofmt_xdate()
 plt.title('Tendencias Recientes')
 fig.tight_layout()
-plt.savefig(f'tendencia_{timestamp}.png')
+plt.savefig('tendencia.png')
 
 # 🔍 Interpretación detallada
 interpretaciones = []
@@ -115,7 +114,7 @@ html = f"""
 <p>📅 Fecha: {datetime.now().strftime('%Y-%m-%d %H:%M')}</p>
 
 <h2>📌 Análisis de Clústeres</h2>
-<img src='clusters_{timestamp}.png' width='600'><br><br>
+<img src='clusters.png' width='600'><br><br>
 {resumen}
 <h3>🔍 Leyenda de Patrones:</h3>
 <ul>
@@ -127,7 +126,7 @@ html = f"""
 <ul>{''.join(interpretaciones)}</ul>
 
 <h2>📈 Tendencias</h2>
-<img src='tendencia_{timestamp}.png' width='600'>
+<img src='tendencia.png' width='600'>
 </body></html>
 """
 
